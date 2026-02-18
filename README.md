@@ -15,6 +15,24 @@ Dependensies:
 - PricingService
 - AvailabilityService
 
+## Business logic
+When creating a reservation:
+1. Check that the room exists
+2. Check that the dates are valid (check-in < check-out)
+3. Check that the room is available for this period
+4. Calculate the price (number of nights × rate)
+5. Make payment
+6. Save the reservation
+7. Return confirmation
+
+## General cycle TDD (test-driven development)
+For each feature:
+1. Write a test
+2. See that it fails
+3. Write minimal code
+4. Get it to pass
+5. Refactor
+
 ## Project setup
 
 ```bash
