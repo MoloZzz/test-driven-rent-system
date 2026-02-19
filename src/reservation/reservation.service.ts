@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create.dto';
+import { PaymentService } from 'src/payment/payment.service';
 
 @Injectable()
 export class ReservationService {
@@ -9,7 +10,7 @@ export class ReservationService {
     @Inject('ReservationRepository')
     private readonly reservationRepo: any,
     @Inject('PaymentService')
-    private readonly paymentService: any,
+    private readonly paymentService: PaymentService,
     @Inject('AvailabilityService')
     private readonly availabilityService: any,
     @Inject('PricingService')
