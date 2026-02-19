@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create.dto';
 
 @Injectable()
@@ -18,6 +18,9 @@ export class ReservationService {
 
   async createReservation(dto: CreateReservationDto) {
     const room = await this.roomRepo.findById(dto.roomId);
+    if (!room) {
+      throw new NotFoundException('Room not found');
+    }
     const isAvailable = await this.availabilityService.isAvailable(
       dto.roomId,
       dto.checkIn,

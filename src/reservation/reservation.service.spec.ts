@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ReservationService } from './reservation.service';
+import { NotFoundException } from '@nestjs/common';
 
 describe('ReservationService', () => {
   let service: ReservationService;
@@ -64,4 +65,25 @@ describe('ReservationService', () => {
     expect(paymentService.charge).toHaveBeenCalledWith(1, 500);
     expect(reservationRepo.save).toHaveBeenCalled();
   });
+
+  it('should throw NotFoundException if room does not exist', async () => {
+  const dto = {
+    roomId: 1,
+    userId: 1,
+    checkIn: new Date('2026-05-10'),
+    checkOut: new Date('2026-05-15'),
+  };
+
+  roomRepo.findById.mockResolvedValue(null);
+
+  await expect(service.createReservation(dto))
+    .rejects
+    .toThrow(NotFoundException);
+
+  expect(availabilityService.isAvailable).not.toHaveBeenCalled();
+  expect(pricingService.calculate).not.toHaveBeenCalled();
+  expect(paymentService.charge).not.toHaveBeenCalled();
+  expect(reservationRepo.save).not.toHaveBeenCalled();
+});
+
 });
