@@ -131,4 +131,28 @@ it('should throw BadRequestException if user have not money', async () => {
   expect(paymentService.charge).toHaveBeenCalled();
   expect(reservationRepo.save).not.toHaveBeenCalled();
 });
+
+it('should throw BadRequestException if room is not available', async () => {
+  const dto = {
+    roomId: 1,
+    userId: 1,
+    checkIn: new Date('2026-05-15'),
+    checkOut: new Date('2026-05-10'),
+  };
+    roomRepo.findById.mockResolvedValue({ id: '1', price: 100 });
+    availabilityService.isAvailable.mockResolvedValue(false);
+    pricingService.calculate.mockReturnValue(500);
+    paymentService.charge.mockImplementation(() => {
+      throw new BadRequestException('Not enough money');
+    });
+    reservationRepo.save.mockResolvedValue({ id: 1 });
+    
+  await expect(service.createReservation(dto))
+    .rejects
+    .toThrow(BadRequestException);
+
+  expect(pricingService.calculate).not.toHaveBeenCalled();
+  expect(paymentService.charge).not.toHaveBeenCalled();
+  expect(reservationRepo.save).not.toHaveBeenCalled();
+});
 });
